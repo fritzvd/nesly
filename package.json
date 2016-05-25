@@ -16,7 +16,8 @@
     "tap": "~0.4.4"
   },
   "scripts": {
-    "test": "tap tests/*.js"
+    "test": "tap tests/*.js && standard",
+    "example": "./bin/nesly ./examples/mario-demo.js ./examples/mario-demo.s"
   },
   "repository": {
     "type": "git",

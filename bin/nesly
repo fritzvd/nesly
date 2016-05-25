@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-var nesly = require('../');
-var fs = require('fs');
+var nesly = require('../')
+var fs = require('fs')
 
+var file = fs.readFileSync(process.argv[2], 'utf-8')
+var output = nesly.compile(file)
 
-var file = fs.readFileSync(process.argv[2], 'utf-8');
-var output = nesly.compile(file);
-
-fs.writeFileSync(process.argv[3], output);
+fs.writeFileSync(process.argv[3], output)
