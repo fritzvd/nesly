@@ -49,17 +49,18 @@ function expressionStatement (node) {
 
   var argumentFn = function (arg) {
     var value
-
-    if (arg.type === 'ArrayExpression' && callee.name.indexOf('Palette') > 0 ) {
-      value = ''
-
-      var original = arg.source()
-      value = original
-                .replace(/(\n*)(\[*)(\]*)(\ *)/g, '')
-                .replace(/0x/g, '$$')
-
-      args.push(value)
-    } else if (arg.type === 'ObjectExpression') {
+    //
+    // if (arg.type === 'ArrayExpression' && callee.name.indexOf('Palette') > 0 ) {
+    //   value = ''
+    //
+    //   var original = arg.source()
+    //   value = original
+    //             .replace(/(\n*)(\[*)(\]*)(\ *)/g, '')
+    //             .replace(/0x/g, '$$')
+    //
+    //   args.push(value)
+    // } else
+    if (arg.type === 'ObjectExpression') {
       value = {}
       arg.properties.forEach(function (p) {
         var k = p.key.name
@@ -97,7 +98,7 @@ function expressionStatement (node) {
     if (fn) {
       if (o) {
         node.update(fn(o))
-      // delete o
+      delete o
       } else {
         node.update(fn(args))
       }
