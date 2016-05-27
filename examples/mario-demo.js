@@ -5,6 +5,8 @@ vblankwait(1)
 clrmem()
 vblankwait(2)
 
+loadPalettes()
+
 setBgPalette([
   0x3b,0x15,0x25,0x27,
   0x3b,0x19,0x29,0x39,
@@ -17,11 +19,14 @@ setSpritePalette([
   0x3b,0x11,0x21,0x31,
   0x3b,0x17,0x27,0x37
 ])
-loadPalettes()
+
 loadSprites()
+
 
 loadBg()
 loadAttribute()
+
+
 
 asm('\tLDA #%10010000')
 asm('\tSTA $2000')
@@ -47,7 +52,8 @@ asm('\trti')
 asm('\t.bank 1')
 asm('\t.org $E000')
 
-// pData()
+PaletteData()
+
 
 addData({x: '80', y: '80', tile: '112', attr: '0'})
 addData({x: '88', y: '80', tile: '113', attr: '0'})
@@ -129,4 +135,5 @@ attributeTable()
 asm('\t.org $FFFA')
 
 vec()
-bank(2, '$0000', '\t.incbin "mario.chr"')
+
+setChrLocation("./examples/mario.chr")

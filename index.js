@@ -19,6 +19,7 @@ var TOKENS = {
   'loadPalettes': palette.loadPalettes,
   'setSpritePalette': palette.setSpritePalette,
   'setBgPalette': palette.setBgPalette,
+  'PaletteData': palette.PaletteData,
   'pData': palette.pData,
   'addData': sprites.addData,
   'loadSprites': sprites.loadSprites,
@@ -37,6 +38,7 @@ var TOKENS = {
   'loadNametable': bg.loadNametable,
   'joyInit': joy.init,
   'joyRead': joy.read,
+  'setChrLocation': sprites.setChrLocation,
   'asm': function (exp) { return exp; }
 }
 
@@ -49,18 +51,18 @@ function expressionStatement (node) {
 
   var argumentFn = function (arg) {
     var value
-    //
-    // if (arg.type === 'ArrayExpression' && callee.name.indexOf('Palette') > 0 ) {
-    //   value = ''
-    //
-    //   var original = arg.source()
-    //   value = original
-    //             .replace(/(\n*)(\[*)(\]*)(\ *)/g, '')
-    //             .replace(/0x/g, '$$')
-    //
-    //   args.push(value)
-    // } else
-    if (arg.type === 'ObjectExpression') {
+
+    if (arg.type === 'ArrayExpression' && callee.name.indexOf('Palette') > 0 ) {
+      value = ''
+
+      var original = arg.source()
+      value = original
+                .replace(/(\n*)(\[*)(\]*)(\ *)/g, '')
+                .replace(/0x/g, '$$')
+                .toUpperCase()
+
+      args.push(value)
+    } else if (arg.type === 'ObjectExpression') {
       value = {}
       arg.properties.forEach(function (p) {
         var k = p.key.name
@@ -98,10 +100,13 @@ function expressionStatement (node) {
     if (fn) {
       if (o) {
         node.update(fn(o))
-      delete o
+        delete o
       } else {
         node.update(fn(args))
       }
+    } else {
+      var msg = 'There is no way to interpret this JS statement as ASM: ' + name
+      throw new Error(msg)
     }
   }
 }
@@ -131,8 +136,40 @@ function variableDeclarator (node) {
   node.update(label + '.db\t' + updatedValue)
 }
 
+function whileStatement (node) {
+  var body = node.body.body
+  var output = body.map(function (node) {
+    if (TYPES[node.type]) {
+      TYPES[node.type](node)
+    }
+    return node.source().split('\n').join('\n\t') // prepend with extra tab
+  })
+
+  node.update([
+    'Forever:',
+    output.join('\n'),
+    '\t JMP Forever'
+  ].join('\n'))
+}
+
+function functionDeclaration (node) {
+  var lines = []
+  var fnname = node.id.name
+
+  lines.push(fnname + ':')
+  node.body.body.forEach(function (fnbody) {
+    lines.push('\t' + fnbody.source() + '')
+  })
+  TOKENS[fnname] = function () {
+    return '\t JMP ' + fnname
+  }
+  node.update(lines.join('\n'))
+}
+
 var TYPES = {
   'ExpressionStatement': expressionStatement,
+  'FunctionDeclaration': functionDeclaration,
+  'WhileStatement': whileStatement,
   'VariableDeclarator': variableDeclarator
 }
 

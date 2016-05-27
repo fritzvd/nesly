@@ -10,7 +10,7 @@
     "example": "examples"
   },
   "dependencies": {
-    "falafel": "~0.3.1"
+    "falafel": "^1.2.0"
   },
   "devDependencies": {
     "tap": "~0.4.4"
