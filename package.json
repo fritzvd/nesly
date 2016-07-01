@@ -17,8 +17,7 @@
   },
   "scripts": {
     "test": "tap tests/*.js && standard",
-    "example": "./bin/nesly ./examples/mario-demo.js ./examples/mario-demo.s",
-    "buildnes": "node ./node_modules/nesly-assembler/cli ./examples/mario-demo.s ./examples/mario-demo.nes"
+    "example": "./bin/nesly ./examples/mario-demo.js ./examples/mario-demo.s"
   },
   "repository": {
     "type": "git",
